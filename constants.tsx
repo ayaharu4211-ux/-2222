@@ -3,6 +3,7 @@ import { AppState } from './types';
 
 export const DEFAULT_STATE: AppState = {
   activeDayId: 1,
+  overallBudget: 0,
   days: Array.from({ length: 5 }, (_, i) => ({
     id: i + 1,
     label: `Day ${i + 1}`,

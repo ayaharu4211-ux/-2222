@@ -11,10 +11,11 @@ export interface DayPlan {
   label: string;
   items: ScheduleItem[];
   notes: string;
-  dailyBudget: number; // 1日の予算
+  dailyBudget: number; // 1日の目安予算（オプション）
 }
 
 export interface AppState {
   days: DayPlan[];
   activeDayId: number;
+  overallBudget: number; // 5日間の総予算
 }

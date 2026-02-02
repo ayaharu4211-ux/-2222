@@ -23,16 +23,21 @@ const App: React.FC = () => {
     setState((prev) => ({ ...prev, activeDayId: id }));
   };
 
+  const handleOverallBudgetChange = (value: number) => {
+    setState((prev) => ({ ...prev, overallBudget: value }));
+  };
+
   const handlePrint = () => {
     window.print();
   };
 
   // 全体の合計計算
-  const grandTotalBudget = state.days.reduce((sum, day) => sum + (day.dailyBudget || 0), 0);
   const grandTotalSpent = state.days.reduce((sum, day) => {
     return sum + day.items.reduce((s, item) => s + (item.estimatedCost || 0), 0);
   }, 0);
-  const grandTotalRemaining = grandTotalBudget - grandTotalSpent;
+  
+  // 残額の計算: 設定した総予算 - 全支出合計
+  const grandTotalRemaining = state.overallBudget - grandTotalSpent;
 
   return (
     <div className="min-h-screen pb-20 px-4 md:px-8 max-w-7xl mx-auto pt-8">
@@ -60,25 +65,34 @@ const App: React.FC = () => {
 
       {/* Total Summary Bar */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 no-print">
-        <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500">
+        <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between ring-2 ring-transparent hover:ring-indigo-100 transition-all">
+          <div className="flex items-center space-x-3 w-full">
+            <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
               <i className="fas fa-wallet"></i>
             </div>
-            <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">5日間総予算</p>
-              <p className="text-xl font-black text-slate-800">¥{grandTotalBudget.toLocaleString()}</p>
+            <div className="flex-grow">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">5日間総予算 (入力可)</p>
+              <div className="flex items-center">
+                <span className="text-slate-400 font-bold mr-1">¥</span>
+                <input
+                  type="number"
+                  value={state.overallBudget || ''}
+                  onChange={(e) => handleOverallBudgetChange(Number(e.target.value))}
+                  placeholder="予算を入力"
+                  className="text-xl font-black text-slate-800 bg-transparent focus:outline-none w-full border-b border-transparent focus:border-indigo-300"
+                />
+              </div>
             </div>
           </div>
         </div>
         <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
+            <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500">
               <i className="fas fa-receipt"></i>
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">総支出額</p>
-              <p className="text-xl font-black text-indigo-600">¥{grandTotalSpent.toLocaleString()}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">5日間総支出額</p>
+              <p className="text-xl font-black text-slate-800">¥{grandTotalSpent.toLocaleString()}</p>
             </div>
           </div>
         </div>

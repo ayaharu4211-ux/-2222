@@ -7,11 +7,10 @@ interface PrintReportProps {
 }
 
 const PrintReport: React.FC<PrintReportProps> = ({ state }) => {
-  const grandTotalBudget = state.days.reduce((sum, day) => sum + (day.dailyBudget || 0), 0);
   const grandTotalSpent = state.days.reduce((sum, day) => {
     return sum + day.items.reduce((s, item) => s + (item.estimatedCost || 0), 0);
   }, 0);
-  const grandTotalRemaining = grandTotalBudget - grandTotalSpent;
+  const grandTotalRemaining = state.overallBudget - grandTotalSpent;
 
   return (
     <div className="print-only print-container text-slate-900">
@@ -22,8 +21,8 @@ const PrintReport: React.FC<PrintReportProps> = ({ state }) => {
 
       <div className="grid grid-cols-3 gap-4 mb-12">
         <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-center">
-          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">5日間総予算</h2>
-          <p className="text-3xl font-black text-slate-800">¥{grandTotalBudget.toLocaleString()}</p>
+          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">5日間設定予算</h2>
+          <p className="text-3xl font-black text-slate-800">¥{state.overallBudget.toLocaleString()}</p>
         </div>
         <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100 text-center">
           <h2 className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-1">総支出額</h2>
@@ -46,18 +45,12 @@ const PrintReport: React.FC<PrintReportProps> = ({ state }) => {
               <h2 className="text-3xl font-black">{day.label}</h2>
               <div className="text-right flex space-x-6">
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 block">予算</span>
+                  <span className="text-[10px] font-bold text-slate-400 block">日別目安予算</span>
                   <span className="font-bold">¥{day.dailyBudget.toLocaleString()}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 block">使用</span>
+                  <span className="text-[10px] font-bold text-slate-400 block">この日の支出</span>
                   <span className="font-bold text-indigo-600">¥{daySpent.toLocaleString()}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 block">残金</span>
-                  <span className={`font-bold ${dayRemaining >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                    ¥{dayRemaining.toLocaleString()}
-                  </span>
                 </div>
               </div>
             </div>
